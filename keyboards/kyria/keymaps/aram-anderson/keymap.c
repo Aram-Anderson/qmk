@@ -63,7 +63,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        `----------------------------------'  `----------------------------------'
  */
     [_LOWER] = LAYOUT(
-      KC_AMPR, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE,                                     LGUI(KC_C), KC_P7, KC_P8, KC_P9, KC_PPLS, KC_PMNS,
+      KC_AMPR, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_BSLS,                                     LGUI(KC_C), KC_P7, KC_P8, KC_P9, KC_PPLS, KC_PMNS,
       KC_TRNS, KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,                                      LGUI(KC_X), KC_P4, KC_P5, KC_P6, KC_PAST, KC_PSLS,
       KC_TRNS, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, LGUI(KC_V), KC_P1,  KC_P2, KC_P3,  KC_PDOT, KC_PEQL,
                                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS, KC_PDOT, KC_P0
@@ -101,16 +101,16 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 static void render_status(void) {
     // Host Keyboard Layer Status
-    oled_write_P(PSTR("Layer: "), false);
+    oled_write_P(PSTR("    Layer: "), false);
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write_P(PSTR("QWERTY"), false);
+            oled_write_P(PSTR("0"), false);
             break;
         case _LOWER:
-            oled_write_P(PSTR("NUM/SYM"), false);
+            oled_write_P(PSTR("1"), false);
             break;
         case _RAISE:
-            oled_write_P(PSTR("MACROS"), false);
+            oled_write_P(PSTR("2"), false);
             break;
         default:
             oled_write_P(PSTR("Undefined"), false);
@@ -241,23 +241,15 @@ static void render_anim(void) {
     }
 }
 
-// static void render_skull(void) { // Helen Tseong (http://shewolfe.co/), the original artist behind the skull, sadly only allowing use of the skull for my personal use. Her (excellent) works are copyright her, and I claim no ownership. Reach out to her for permission!
-//     static const char PROGMEM skull[] = {
-//     };
-//      oled_write_raw_P(skull, 801);
-//  }
-
 void oled_task_user(void) {
     if (!is_keyboard_master()) {
-        //render_skull();
-        //oled_set_cursor(7,6);
         render_status();
-     // Renders the current keyboard state (layer, lock, caps, scroll, etc)
     } else {
         render_anim();
         oled_set_cursor(0,6);
-        sprintf(wpm_str, "       WPM: %03d", get_current_wpm());
+        sprintf(wpm_str, "WPM: %03d", get_current_wpm());
         oled_write(wpm_str, false);
+        render_status();
     }
 }
 
