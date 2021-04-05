@@ -43,9 +43,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        `----------------------------------'  `----------------------------------'
  */
     [_QWERTY] = LAYOUT(
-      KC_TAB, KC_Q, KC_W, KC_E, LT(_RAISE, KC_R), LT(_LOWER, KC_T),                 LT(_LOWER, KC_Y), LT(_RAISE, KC_U), KC_I, KC_O, KC_P, KC_MINS,
+      KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T,                KC_Y, KC_U, KC_I, KC_O, KC_P, KC_MINS,
       KC_ESC, KC_A,   KC_S,   KC_D,   KC_F,   KC_G,                                         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-      KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   0x81,   0x80, 0x7f, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_PEQL,
+      LSFT_T(KC_BSLS), KC_Z,   KC_X,   KC_C,   KC_V,   KC_B, LT(_LOWER, 0x81),   LT(_RAISE, 0x80), LT(_LOWER, 0x7f), LT(_RAISE, KC_PDOT), KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_PEQL,
               KC_LGUI, KC_LALT, KC_LCTL, KC_BSPC, KC_LGUI, KC_ENT, KC_SPC, KC_RCTL, KC_LALT, KC_LGUI
     ),
 /*
@@ -63,7 +63,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        `----------------------------------'  `----------------------------------'
  */
     [_LOWER] = LAYOUT(
-      KC_AMPR, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_BSLS,                                     LGUI(KC_C), KC_P7, KC_P8, KC_P9, KC_PPLS, KC_PMNS,
+      KC_AMPR, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE,                                     LGUI(KC_C), KC_P7, KC_P8, KC_P9, KC_PPLS, KC_PMNS,
       KC_TRNS, KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,                                      LGUI(KC_X), KC_P4, KC_P5, KC_P6, KC_PAST, KC_PSLS,
       KC_TRNS, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, LGUI(KC_V), KC_P1,  KC_P2, KC_P3,  KC_PDOT, KC_PEQL,
                                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS, KC_PDOT, KC_P0
@@ -85,8 +85,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_RAISE] = LAYOUT(
       0x80, RGB_HUI, 	  KC_LSFT,    KC_LGUI,    KC_NO,    KC_NO,                                        KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
       0x81, RGB_HUD, LCA(KC_F), LCAG(KC_LEFT), LCAG(KC_RGHT), LCTL(KC_C),                                     KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
-      0x7f, RGB_TOG, KC_LCTL, KC_LALT, _______, _______, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
-                                 RGB_SAI, RGB_SAD, RGB_HUD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD, KC_TRNS, KC_TRNS, KC_TRNS
+      0x7f, RGB_TOG, KC_LCTL, KC_LALT, _______, SGUI(KC_4), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
+                                 KC_LSFT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
     ),
 };
 
@@ -101,7 +101,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 static void render_status(void) {
     // Host Keyboard Layer Status
-    oled_write_P(PSTR("    Layer: "), false);
+    oled_write_P(PSTR("     LAYER: "), false);
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
             oled_write_P(PSTR("0"), false);
@@ -242,15 +242,11 @@ static void render_anim(void) {
 }
 
 void oled_task_user(void) {
-    if (!is_keyboard_master()) {
-        render_status();
-    } else {
         render_anim();
         oled_set_cursor(0,6);
         sprintf(wpm_str, "WPM: %03d", get_current_wpm());
         oled_write(wpm_str, false);
         render_status();
-    }
 }
 
 #endif
